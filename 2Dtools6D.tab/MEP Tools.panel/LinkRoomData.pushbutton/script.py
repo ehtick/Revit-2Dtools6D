@@ -86,8 +86,9 @@ doc_el_tot = FilteredElementCollector(doc).WhereElementIsNotElementType().ToElem
 
 for el in doc_el_tot:
 	try:
-		if el.Category.CategoryType == CategoryType.Model and "dwg" not in el.Category.Name and el.Category.SubCategories.Size > 0 and el.Category.CanAddSubcategory and "Detail" not in el.Category.Name and "Line" not in el.Category.Name:
-			work_ele.append(el)
+		if el.Category.CategoryType == CategoryType.Model:
+			if "dwg" not in el.Category.Name and el.Category.SubCategories.Size > 0 or el.Category.CanAddSubcategory:
+				work_ele.append(el)
 	except:
 		pass
 
@@ -97,9 +98,8 @@ categoryN = set()
 
 for wl in work_ele:
 	try:
-		if wl.Location.GetType()== LocationPoint:
-			work_ele_point.append(wl)
-			work_point.append(wl.Location.Point)
+		work_point.append(wl.Location.Point)
+		work_ele_point.append(wl)
 	except:
 		pass
 
@@ -138,13 +138,13 @@ linkinst = []
 
 ldoc=None
 
-if len(doclnkn) == 1:
-	for i,j,ins in zip(doclnka,doclnkn,lnks):
-		if str_linkname == j:
-			ldoc = i
-			linkinst=ins
 
+for i,j,ins in zip(doclnka,doclnkn,lnks):
+	if str_linkname in j:
+		ldoc = i
+		linkinst=ins
 
+print(str_linkname in j)
 
 if ldoc == None:
 	script.exit()
@@ -235,9 +235,9 @@ for roomi in roomsinst:
 	pointsl.append(pointslist)
 	elem.append(elepoint)
 
+
 t_Compilare = Transaction(doc,"Inserimento Room Link info")
 t_Compilare.Start()
-
 
 final_value = []
 for r in roomsl:
